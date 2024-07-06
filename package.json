@@ -1,0 +1,11 @@
+{
+  "name": "script",
+  "version": "1.0.0",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^3.10.1",
+    "puppeteer": "^22.10.0"
+  },
+  "type": "module"
+}
