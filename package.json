@@ -4,8 +4,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mongodb": "^6.8.0",
     "mysql2": "^3.10.1",
-    "puppeteer": "^22.10.0"
+    "puppeteer": "^22.10.0",
+    "redis": "^4.6.15",
+    "threads": "^1.7.0"
   },
   "type": "module"
 }
