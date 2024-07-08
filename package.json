@@ -8,6 +8,7 @@
     "mysql2": "^3.10.1",
     "puppeteer": "^22.10.0",
     "redis": "^4.6.15",
+    "sqlite3": "^5.1.7",
     "threads": "^1.7.0"
   },
   "type": "module"

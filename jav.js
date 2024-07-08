@@ -1,21 +1,36 @@
 import puppeteer from 'puppeteer';
 import redis from 'redis';
-import mongodb from 'mongodb';
+import sqlite3 from 'sqlite3';
 const client = redis.createClient({
     url: 'redis://127.0.0.1:6379'
 });
-const mongodbClient = mongodb.MongoClient;
-const url = 'mongodb://root:123456@127.0.0.1';
-const dbName = 'jav';
-// 存入mongodb
+const db = new sqlite3.Database('javbus.db', (err) => {
+    if (err) {
+        return console.error(err.message);
+    }
+    console.log('Connected to the SQlite database.');
+});
+async function createTable() {
+    db.run(`
+      CREATE TABLE IF NOT EXISTS movies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        identifier TEXT,
+        name TEXT,
+        url TEXT,
+        magnetLinks TEXT,
+        preview TEXT,
+        tags TEXT
+      )
+    `);
+}
 async function saveToMongo(data) {
     try {
-        const client = await mongodbClient.connect(url, { useUnifiedTopology: true });
-        const db = client.db(dbName);
-        const collection = db.collection('magnet_links');
-        await collection.insertOne(data);
+        db.run(`
+          INSERT INTO movies (identifier, name, url, magnetLinks, preview, tags) VALUES (?, ?, ?, ?, ?, ?)
+        `, [data.identifier, data.name, data.url, JSON.stringify(data.magnetLinks), data.preview, JSON.stringify(data.tags)]);
+
     } catch (err) {
-        console.error('Error saving to MongoDB:', err);
+        console.error('Error saving to SQLite:', err);
     }
 }
 
@@ -33,6 +48,7 @@ async function crawlIndexPage(page) {
         console.log(`Pushing URL to Redis: ${url}`);
         await client.lPush('javbus', url);
     }
+    return
 
     // 下滑到页面底部以加载更多内容
     await page.evaluate(async () => {
@@ -151,6 +167,6 @@ async function processQueue(browser) {
     await client.connect();
     const page = await browser.newPage();
     await page.goto('https://www.javbus.com/');
-    // await crawlIndexPage(page); // 调用爬取函数
+    await crawlIndexPage(page); // 调用爬取函数
     await processQueue(browser); // 调用处理队列函数
 })();
