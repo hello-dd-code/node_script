@@ -48,7 +48,6 @@ async function crawlIndexPage(page) {
         console.log(`Pushing URL to Redis: ${url}`);
         await client.lPush('javbus', url);
     }
-    return
 
     // 下滑到页面底部以加载更多内容
     await page.evaluate(async () => {
@@ -68,7 +67,7 @@ async function crawlIndexPage(page) {
     });
     // 最多爬10页
     const currentPage = await page.evaluate(() => document.querySelector('.pagination').querySelector('.active').textContent);
-    if (parseInt(currentPage) >= 10) {
+    if (parseInt(currentPage) >= 100) {
         return;
     }
     // 确保下一页按钮已加载并且可点击
@@ -167,6 +166,6 @@ async function processQueue(browser) {
     await client.connect();
     const page = await browser.newPage();
     await page.goto('https://www.javbus.com/');
-    await crawlIndexPage(page); // 调用爬取函数
+    // await crawlIndexPage(page); // 调用爬取函数
     await processQueue(browser); // 调用处理队列函数
 })();
