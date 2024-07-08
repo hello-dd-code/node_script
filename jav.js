@@ -5,7 +5,7 @@ const client = redis.createClient({
     url: 'redis://127.0.0.1:6379'
 });
 const mongodbClient = mongodb.MongoClient;
-const url = 'mongodb://root:0uy6PbhDxMZOIHoz@8.134.219.222:27017';
+const url = 'mongodb://root:123456@127.0.0.1';
 const dbName = 'jav';
 // 存入mongodb
 async function saveToMongo(data) {
